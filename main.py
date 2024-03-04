@@ -10,16 +10,22 @@ load_dotenv(dotenv_path)
 token = os.environ.get("TOKEN")
 bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
 targets = os.environ.get("TARGETS").split(";")
+targets_dm = os.environ.get("TARGETS_DM").split(";")
 
 @bot.event
 async def on_ready():
     print(f'Zalogowano jako {bot.user.name} ({bot.user.id})')
     for guild in bot.guilds:
-        for member in guild.members:
-            for target in targets:
-                if target == f'{member.id}':
-                    dm_channel = await member.create_dm()
-                    await dm_channel.send("test")
+        for target in targets:
+            user = guild.get_member(int(target))
+            if user.activity:
+                print(f"{user.name}: " + user.activity.name)
+                print(user.activity.start)
+                for dm in targets_dm:
+                    user_dm = await guild.get_member(int(dm)).create_dm()
+                    await user_dm.send(user.name + " napierdala w " + user.activity.name )
+
+
 
 
 
