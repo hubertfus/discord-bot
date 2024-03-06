@@ -11,7 +11,10 @@ token = os.environ.get("TOKEN")
 bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
 targets = os.environ.get("TARGETS").split(";")
 targets_dm = os.environ.get("TARGETS_DM").split(";")
+game_targets = os.environ.get("GAME_TARGETS").split(";")
+
 online = []
+online_in_game = []
 @bot.event
 async def on_ready():
     while(True):
