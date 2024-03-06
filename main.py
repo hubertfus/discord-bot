@@ -26,6 +26,17 @@ async def on_ready():
                             await user_dm.send(user.name + " napierdala w " + user.activity.name)
                 elif user.name in online:
                     online.remove(user.name)
+        for guild in bot.guilds:
+            for member in guild.members:
+                if member.activity:
+                    if member.name not in online_in_game:
+                        online_in_game.append(member.name)
+                        for game in game_targets:
+                            if member.activity.name == game:
+                                user_dm = await guild.get_channel(int(1184204317712973906))
+                                await user_dm.send(f"@{member.name} pojebabało cię ciapaczku żeby w to grać")
+                elif member.name in online_in_game:
+                    online_in_game.remove(member.name)
         await asyncio.sleep(3)
 
 
