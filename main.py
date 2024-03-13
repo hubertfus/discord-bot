@@ -36,17 +36,17 @@ async def on_ready():
                     actual_lesson = lesson["name"]
                     channel = bot.get_channel(1217418843593375775)
                     await channel.send(f"{lesson["name"]} s.{lesson["class"]} {lesson["startAt"]} - {lesson["endAt"]} ")
-        #     for guild in bot.guilds:
-        #         for target in targets:
-        #             user = guild.get_member(int(target))
-        #             if user.activity:
-        #                 if user.name not in online:
-        #                     online.append(user.name)
-        #                     for dm in targets_dm:
-        #                         user_dm = await guild.get_member(int(dm)).create_dm()
-        #                         await user_dm.send(user.name + " napierdala w " + user.activity.name)
-        #             elif user.name in online:
-        #                 online.remove(user.name)
+            for guild in bot.guilds:
+                for target in targets:
+                    user = guild.get_member(int(target))
+                    if user.activity:
+                        if user.name not in online:
+                            online.append(user.name)
+                            for dm in targets_dm:
+                                user_dm = await guild.get_member(int(dm)).create_dm()
+                                await user_dm.send(user.name + " napierdala w " + user.activity.name)
+                    elif user.name in online:
+                        online.remove(user.name)
 
         # for guild in bot.guilds:
         #     for member in guild.members:
