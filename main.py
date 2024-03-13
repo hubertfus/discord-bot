@@ -4,31 +4,50 @@ import os
 from os.path import join, dirname
 from dotenv import load_dotenv
 import asyncio
+import json
+import requests
+
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
+from datetime import datetime
 
 token = os.environ.get("TOKEN")
 bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
 targets = os.environ.get("TARGETS").split(";")
 targets_dm = os.environ.get("TARGETS_DM").split(";")
 # game_targets = os.environ.get("GAME_TARGETS").split(";")
-
+url = "https://tews-0ab33cc200f9.herokuapp.com/plan"
+headers = {'user-agent': 'my-app/0.0.1'}
+response = requests.get(url, headers=headers)
+data = json.loads(response.text)
 online = []
+actual_lesson = ""
+
 # online_in_game = []
 @bot.event
 async def on_ready():
-    while(True):
-        for guild in bot.guilds:
-            for target in targets:
-                user = guild.get_member(int(target))
-                if user.activity:
-                    if user.name not in online:
-                        online.append(user.name)
-                        for dm in targets_dm:
-                            user_dm = await guild.get_member(int(dm)).create_dm()
-                            await user_dm.send(user.name + " napierdala w " + user.activity.name)
-                elif user.name in online:
-                    online.remove(user.name)
+    global actual_lesson
+    while True:
+        weekday = datetime.today().weekday()
+        if weekday < 4:
+            for lesson in data[weekday]:
+                now = datetime.now().replace(minute=datetime.now().minute-15)
+                if lesson["startAt"] < now.strftime("%H:%M") < lesson["endAt"] and actual_lesson != lesson["name"]:
+                    actual_lesson = lesson["name"]
+                    channel = bot.get_channel(1217418843593375775)
+                    await channel.send(f"{lesson["name"]} s.{lesson["class"]} {lesson["startAt"]} - {lesson["endAt"]} ")
+        #     for guild in bot.guilds:
+        #         for target in targets:
+        #             user = guild.get_member(int(target))
+        #             if user.activity:
+        #                 if user.name not in online:
+        #                     online.append(user.name)
+        #                     for dm in targets_dm:
+        #                         user_dm = await guild.get_member(int(dm)).create_dm()
+        #                         await user_dm.send(user.name + " napierdala w " + user.activity.name)
+        #             elif user.name in online:
+        #                 online.remove(user.name)
+
         # for guild in bot.guilds:
         #     for member in guild.members:
         #         if member.activity:
@@ -49,8 +68,6 @@ async def on_message(message):
         sendmesage = 'Chodź na słówko! :rage:'
         if "tyski" in message.content.lower() or "siost" in message.content.lower() or "fortn" in message.content.lower():
             await message.reply(sendmesage)
-
-
 
 
 bot.run(token)
