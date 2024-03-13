@@ -31,7 +31,7 @@ async def on_ready():
         weekday = datetime.today().weekday()
         if weekday < 4:
             for lesson in data[weekday]:
-                now = datetime.now().replace(minute=datetime.now().minute-15)
+                now = datetime.now().replace(minute=datetime.now().minute+15)
                 if lesson["startAt"] < now.strftime("%H:%M") < lesson["endAt"] and actual_lesson != lesson["name"]:
                     actual_lesson = lesson["name"]
                     channel = bot.get_channel(1217418843593375775)
